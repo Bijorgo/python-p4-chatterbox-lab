@@ -38,6 +38,8 @@ def messages_by_id(id):
   
 #POST
 # creates a new message with a body and username from params, and returns the newly created post as JSON.
+# FOR LATER: REVIEW THIS PART
+# This part took forever to fix: remove the default fields. Still doesn't really make sense to me
 @app.post('/messages')
 def new_message():
     new_message = request.json
