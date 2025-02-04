@@ -54,10 +54,8 @@ def new_message():
             body=new_message["body"],
             username=new_message["username"]
         )
-        
         db.session.add(message)
         db.session.commit()
-
         # Return the created message
         return jsonify(message.to_dict()), 201  # Created
     except Exception as exc:
@@ -93,7 +91,7 @@ def delete_messages_by_id(id):
             db.session.commit()
             return jsonify({}), 204 # No Content, sucess
         except Exception as exc:
-            return jsonify({ "error" : "ID not found"}), 404
+            return jsonify({ "error" : "ID not found"}), 404 # Not found
     return ''
 
 if __name__ == '__main__':
