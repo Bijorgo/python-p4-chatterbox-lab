@@ -17,24 +17,31 @@ db.init_app(app)
 #GET
 @app.get("/")
 def index():
-    return jsonify({ "message" : 
-                   "Hello, World! Welcome to Messages."}
-                   ), 200 # Status code OK
+    respnose_dict = { "message" : "Hello, World! Welcome to Messages."}
+    return make_response( respnose_dict, 200)
 
 #GET
 # returns an array of all messages as JSON, ordered by created_at in ascending order.
 @app.get('/messages')
 def messages():
-    return jsonify([message.to_dict() for message in Message.query.all()])
+    respnse_dict_list = ([message.to_dict() for message in Message.query.all()])
+
+    response = make_response(
+        respnse_dict_list,
+        200
+    )
+    return response
 
 #GET by id
 @app.get('/messages/<int:id>')
 def messages_by_id(id):
     message = db.session.get(Message, id)
     if message:
-        return jsonify(message.to_dict())
+        response_dict = message.to_dict()
+        return make_response(response_dict, 200)
     else:
-        return jsonify({ "error" : "ID not found"}), 404 # not found
+        resonse_dict = { "error" : "ID not found"}
+        return make_response(response_dict, 404)
   
 #POST
 # creates a new message with a body and username from params, and returns the newly created post as JSON.
@@ -57,9 +64,11 @@ def new_message():
         db.session.add(message)
         db.session.commit()
         # Return the created message
-        return jsonify(message.to_dict()), 201  # Created
+        response_dict = message.to_dict()
+        return make_response(response_dict, 201)  # Created
     except Exception as exc:
-        return jsonify({"error": str(exc)}), 400  # Bad request
+        response_dict = {"error": str(exc)}
+        return make_response(response_dict, 400)  # Bad request
 
 #PATCH
 # updates the body of the message using params, and returns the updated message as JSON.
@@ -73,11 +82,14 @@ def update_messages_by_id(id):
                 setattr(existing_message, key, updated_message[key])
             db.session.add(existing_message)
             db.session.commit()
-            return jsonify(db.session.get(Message, id).to_dict()), 200 
+            response_dict = db.session.get(Message, id).to_dict()
+            return make_response(response_dict, 200)
         except Exception as exc:
-            return jsonify({ "error": str(exc) }), 400 # Bad request
+            response_dict = {"error": str(exc)}
+            return make_response(response_dict, 400)  # Bad request
     else:
-        return jsonify({ "error" : "ID was not found" }), 404 # ID not found
+        response_dict = { "error" : "ID was not found" }
+        return make_response(response_dict, 404)# ID not found
 
 
 #DELETE
@@ -89,9 +101,10 @@ def delete_messages_by_id(id):
         try:
             db.session.delete(existing_message)
             db.session.commit()
-            return jsonify({}), 204 # No Content, sucess
+            return make_response('', 204) # No Content, sucess
         except Exception as exc:
-            return jsonify({ "error" : "ID not found"}), 404 # Not found
+            response_dict = { "error" : "ID was not found" }
+            return make_response(response_dict, 404)# ID not found
     return ''
 
 if __name__ == '__main__':
